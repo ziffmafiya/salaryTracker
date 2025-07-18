@@ -720,7 +720,10 @@ class SalaryTracker {
             jobCell.textContent = job.name;
 
             const salaryCell = document.createElement('td');
-            salaryCell.innerHTML = `${entry.salary.toFixed(2)} UAH`;
+            salaryCell.classList.add('salary-cell-content');
+            const salaryValueSpan = document.createElement('span');
+            salaryValueSpan.textContent = `${entry.salary.toFixed(2)} UAH`;
+            salaryCell.appendChild(salaryValueSpan);
 
             // Add percentage change indicator for salary
             if (salaryPercentChange !== null) {
@@ -752,31 +755,6 @@ class SalaryTracker {
 
             const hourlyRateCell = document.createElement('td');
             hourlyRateCell.innerHTML = `${hourlyRate.toFixed(2)} UAH/h`;
-
-            // Add percentage change indicator for hourly rate
-            if (hourlyRatePercentChange !== null) {
-                const percentSpan = document.createElement('span');
-                percentSpan.className = hourlyRatePercentChange >= 0 ? 'percent-change positive' : 'percent-change negative';
-
-                // Create SVG arrow
-                const svgIcon = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
-                svgIcon.classList.add('arrow-icon');
-                svgIcon.setAttribute('width', '12');
-                svgIcon.setAttribute('height', '12');
-
-                const useElement = document.createElementNS('http://www.w3.org/2000/svg', 'use');
-                useElement.setAttribute('href',
-                    hourlyRatePercentChange >= 0 ? '#arrow-up' : '#arrow-down');
-
-                svgIcon.appendChild(useElement);
-                percentSpan.appendChild(svgIcon);
-
-                // Add percentage text
-                const percentText = document.createTextNode(` ${hourlyRatePercentChange >= 0 ? '+' : ''}${hourlyRatePercentChange.toFixed(1)}%`);
-                percentSpan.appendChild(percentText);
-
-                hourlyRateCell.appendChild(percentSpan);
-            }
 
             const salaryDiffCell = document.createElement('td');
             salaryDiffCell.textContent = `${salaryDiff >= 0 ? '+' : ''}${salaryDiff.toFixed(2)}`;
