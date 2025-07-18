@@ -1,0 +1,454 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Salary Tracker</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/date-fns@2.29.3/index.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/lottie-web/5.12.2/lottie.min.js"></script>
+
+    <!-- SVG Definitions -->
+    <svg xmlns="http://www.w3.org/2000/svg" style="display: none;">
+        <symbol id="arrow-up" viewBox="0 0 24 24">
+            <polyline points="1.5 18.68 9.14 11.04 12.96 14.86 22.5 5.32" fill="none" stroke="currentColor"
+                stroke-miterlimit="10" stroke-width="1.91" />
+            <polyline points="17.73 5.32 22.5 5.32 22.5 10.09" fill="none" stroke="currentColor" stroke-miterlimit="10"
+                stroke-width="1.91" />
+        </symbol>
+        <symbol id="arrow-down" viewBox="0 0 24 24">
+            <polyline points="1.5 5.32 9.14 12.96 12.96 9.14 22.5 18.68" fill="none" stroke="currentColor"
+                stroke-miterlimit="10" stroke-width="1.91" />
+            <polyline points="17.73 18.68 22.5 18.68 22.5 13.91" fill="none" stroke="currentColor"
+                stroke-miterlimit="10" stroke-width="1.91" />
+        </symbol>
+    </svg>
+</head>
+
+<body>
+    <div class="container">
+        <header>
+            <h1>Salary Tracker</h1>
+        </header>
+
+        <!-- General Analytics Section -->
+        <section class="analytics-section">
+            <div class="section-header">
+                <h2>General Analytics</h2>
+                <div class="settings-gear" id="analyticsSettingsBtn">
+                    <div id="gearAnimation"></div>
+                </div>
+            </div>
+            <div class="analytics-grid">
+                <div class="analytics-card">
+                    <div class="card-label">Total Income</div>
+                    <div class="card-value" id="totalIncome">54944.88 UAH</div>
+                </div>
+                <div class="analytics-card">
+                    <div class="card-label">Total Hours</div>
+                    <div class="card-value" id="totalHours">864.00</div>
+                </div>
+                <div class="analytics-card">
+                    <div class="card-label">Average Rate</div>
+                    <div class="card-value" id="averageRate">63.59 UAH/hour</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Monthly Income Chart Section -->
+        <section class="chart-section">
+            <div class="section-header">
+                <div class="chart-title-container">
+                    <h2>Monthly Income</h2>
+                    <div class="dropdown">
+                        <button id="chartViewBtn" class="dropdown-btn">Overall ▼</button>
+                        <div id="chartViewDropdown" class="dropdown-content">
+                            <a href="#" data-view="overall" class="active">Overall</a>
+                            <!-- Job options will be added dynamically -->
+                        </div>
+                    </div>
+                </div>
+                <div class="chart-controls">
+                    <div class="chart-control-group">
+                        <span class="control-label">Period:</span>
+                        <div class="control-options">
+                            <select id="periodSelect">
+                                <option value="all">All Time</option>
+                                <option value="year">This Year</option>
+                                <option value="6months">Last 6 Months</option>
+                                <option value="3months">Last 3 Months</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="chart-control-group">
+                        <span class="control-label">Data Type:</span>
+                        <div class="control-options">
+                            <label>
+                                <input type="radio" name="chartType" value="salary" checked> Monthly Salary
+                            </label>
+                            <label>
+                                <input type="radio" name="chartType" value="hourly"> Hourly Rate
+                            </label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <canvas id="salaryChart"></canvas>
+        </section>
+
+        <!-- Data Entry Section -->
+        <section class="data-section">
+            <div class="left-section">
+                <div class="add-salary-section">
+                    <h2>Add Salary Data</h2>
+                    <form id="salaryForm">
+                        <div class="form-group">
+                            <label for="jobSelect">Job:</label>
+                            <select id="jobSelect" required>
+                                <!-- Jobs will be populated dynamically -->
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="month">Month:</label>
+                            <select id="month" required>
+                                <option value="">Select Month</option>
+                                <option value="01">January</option>
+                                <option value="02">February</option>
+                                <option value="03">March</option>
+                                <option value="04">April</option>
+                                <option value="05">May</option>
+                                <option value="06">June</option>
+                                <option value="07">July</option>
+                                <option value="08">August</option>
+                                <option value="09">September</option>
+                                <option value="10">October</option>
+                                <option value="11">November</option>
+                                <option value="12">December</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="yearSelect">Year:</label>
+                            <select id="yearSelect" required>
+                                <option value="2024">2024</option>
+                                <option value="2025" selected>2025</option>
+                                <option value="2026">2026</option>
+                                <option value="2027">2027</option>
+                                <option value="2028">2028</option>
+                                <option value="2029">2029</option>
+                                <option value="2030">2030</option>
+                                <option value="2031">2031</option>
+                                <option value="2032">2032</option>
+                                <option value="2033">2033</option>
+                                <option value="2034">2034</option>
+                                <option value="2035">2035</option>
+                                <option value="2036">2036</option>
+                                <option value="2037">2037</option>
+                                <option value="2038">2038</option>
+                                <option value="2039">2039</option>
+                                <option value="2040">2040</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="salary">Salary (UAH):</label>
+                            <input type="number" id="salary" step="0.01" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="hours">Hours Worked:</label>
+                            <input type="number" id="hours" step="0.1" required value="96">
+                        </div>
+                        <button type="submit">Add Entry</button>
+                    </form>
+                </div>
+            </div>
+
+            <div class="divider"></div>
+
+            <div class="right-section">
+                <div class="statistics-section">
+                    <h2>Statistics</h2>
+                    <div class="form-group">
+                        <label for="viewJobSelect">View Job Data:</label>
+                        <select id="viewJobSelect">
+                            <!-- Jobs will be populated dynamically -->
+                        </select>
+                    </div>
+                    <div class="current-entry">
+                        <h3>Current Entry</h3>
+                        <div class="stat-item">
+                            <span class="label">Hourly Rate:</span>
+                            <span id="currentHourlyRate" class="tooltip-trigger">-</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="label">Salary:</span>
+                            <span id="currentSalary">-</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="label">Hours:</span>
+                            <span id="currentHours">-</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="label">Difference:</span>
+                            <span id="currentDifference" class="tooltip-trigger">-</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Salary History Section -->
+        <section class="history-section">
+            <h2>Salary History</h2>
+            <div class="table-container">
+                <table id="salaryHistoryTable">
+                    <thead>
+                        <tr>
+                            <th>Month</th>
+                            <th>Job</th>
+                            <th>Salary (UAH)</th>
+                            <th>Hours</th>
+                            <th>Hourly Rate</th>
+                            <th>Salary Diff</th>
+                            <th>Rate Diff</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- Salary history will be populated dynamically -->
+                    </tbody>
+                </table>
+            </div>
+            <button id="clearAllData" class="danger-button">Clear All Data</button>
+        </section>
+
+        <div class="tooltip" id="tooltip"></div>
+
+        <!-- Job Settings Button -->
+        <div class="settings-container">
+            <button id="jobSettingsBtn" class="settings-button">Job Settings</button>
+        </div>
+    </div>
+
+    <!-- Job Settings Modal -->
+    <div id="jobSettingsModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Job Settings</h2>
+                <span class="close-modal">&times;</span>
+            </div>
+            <div class="modal-body">
+                <div class="jobs-list">
+                    <h3>Your Jobs</h3>
+                    <div id="jobsList">
+                        <!-- Jobs will be populated dynamically -->
+                    </div>
+                </div>
+                <div class="add-job-form">
+                    <h3>Add New Job</h3>
+                    <form id="addJobForm">
+                        <div class="form-group">
+                            <label for="newJobName">Job Name:</label>
+                            <input type="text" id="newJobName" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="newJobBaseRate">Base Rate (UAH):</label>
+                            <input type="number" id="newJobBaseRate" step="0.01" value="10395" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="newJobBaseHours">Base Hours:</label>
+                            <input type="number" id="newJobBaseHours" step="0.1" value="192" required>
+                        </div>
+                        <button type="submit">Add Job</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Edit Job Modal -->
+    <div id="editJobModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Edit Job</h2>
+                <span class="close-modal">&times;</span>
+            </div>
+            <div class="modal-body">
+                <form id="editJobForm">
+                    <input type="hidden" id="editJobId">
+                    <div class="form-group">
+                        <label for="editJobName">Job Name:</label>
+                        <input type="text" id="editJobName" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="editJobBaseRate">Base Rate (UAH):</label>
+                        <input type="number" id="editJobBaseRate" step="0.01" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="editJobBaseHours">Base Hours:</label>
+                        <input type="number" id="editJobBaseHours" step="0.1" required>
+                    </div>
+                    <button type="submit">Save Changes</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Analytics Settings Modal -->
+    <div id="analyticsSettingsModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Analytics Settings</h2>
+                <span class="close-modal">&times;</span>
+            </div>
+            <div class="modal-body">
+                <!-- Time Period Section -->
+                <div class="settings-section">
+                    <h3>Time Period</h3>
+                    <div class="form-group">
+                        <label for="analyticsPeriodSelect">Select Period:</label>
+                        <select id="analyticsPeriodSelect">
+                            <option value="3months">Last 3 Months</option>
+                            <option value="6months">Last 6 Months</option>
+                            <option value="year">This Year</option>
+                            <option value="all" selected>All Time</option>
+                            <option value="custom">Custom Range</option>
+                        </select>
+                    </div>
+                    <div id="customDateRange" class="form-group" style="display: none;">
+                        <div class="date-range-container">
+                            <div class="date-input">
+                                <label for="customStartDate">From:</label>
+                                <input type="month" id="customStartDate">
+                            </div>
+                            <div class="date-input">
+                                <label for="customEndDate">To:</label>
+                                <input type="month" id="customEndDate">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Job Selection Section -->
+                <div class="settings-section">
+                    <h3>Job Selection</h3>
+                    <div class="form-group">
+                        <div class="job-selection-controls">
+                            <button type="button" id="selectAllJobs" class="selection-btn">Select All</button>
+                            <button type="button" id="deselectAllJobs" class="selection-btn">Deselect All</button>
+                        </div>
+                        <div id="analyticsJobsContainer" class="checkbox-group">
+                            <!-- Jobs checkboxes will be populated dynamically -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Display Options Section -->
+                <div class="settings-section">
+                    <h3>Display Options</h3>
+                    <div class="form-group">
+                        <label>View Type:</label>
+                        <div class="radio-group">
+                            <label>
+                                <input type="radio" name="analyticsDataType" value="overall" checked> Combined View
+                            </label>
+                            <label>
+                                <input type="radio" name="analyticsDataType" value="byJob"> Separate by Job
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Action Buttons -->
+                <div class="modal-actions">
+                    <button type="button" id="resetAnalyticsSettings" class="secondary-btn">Reset to Default</button>
+                    <button type="button" id="applyAnalyticsSettings" class="primary-btn">Apply Settings</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Edit Entry Modal -->
+    <div id="editEntryModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Edit Salary Entry</h2>
+                <span class="close-modal">&times;</span>
+            </div>
+            <div class="modal-body">
+                <form id="editEntryForm">
+                    <input type="hidden" id="editEntryId">
+                    <div class="form-group">
+                        <label for="editEntryJob">Job:</label>
+                        <select id="editEntryJob" required>
+                            <!-- Jobs will be populated dynamically -->
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="editEntryMonth">Month:</label>
+                        <select id="editEntryMonth" required>
+                            <option value="01">January</option>
+                            <option value="02">February</option>
+                            <option value="03">March</option>
+                            <option value="04">April</option>
+                            <option value="05">May</option>
+                            <option value="06">June</option>
+                            <option value="07">July</option>
+                            <option value="08">August</option>
+                            <option value="09">September</option>
+                            <option value="10">October</option>
+                            <option value="11">November</option>
+                            <option value="12">December</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="editEntryYear">Year:</label>
+                        <select id="editEntryYear" required>
+                            <option value="2024">2024</option>
+                            <option value="2025">2025</option>
+                            <option value="2026">2026</option>
+                            <option value="2027">2027</option>
+                            <option value="2028">2028</option>
+                            <option value="2029">2029</option>
+                            <option value="2030">2030</option>
+                            <option value="2031">2031</option>
+                            <option value="2032">2032</option>
+                            <option value="2033">2033</option>
+                            <option value="2034">2034</option>
+                            <option value="2035">2035</option>
+                            <option value="2036">2036</option>
+                            <option value="2037">2037</option>
+                            <option value="2038">2038</option>
+                            <option value="2039">2039</option>
+                            <option value="2040">2040</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="editEntrySalary">Salary (UAH):</label>
+                        <input type="number" id="editEntrySalary" step="0.01" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="editEntryHours">Hours Worked:</label>
+                        <input type="number" id="editEntryHours" step="0.1" required>
+                    </div>
+                    <button type="submit">Save Changes</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        <div class="base-info">
+            <div>Base Rates Information</div>
+            <div class="base-rates-container" id="baseRatesContainer">
+                <!-- Base rates will be populated dynamically -->
+            </div>
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+
+</html>
