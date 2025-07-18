@@ -273,6 +273,27 @@ class SalaryTracker {
             e.preventDefault();
             this.saveJobEdit();
         });
+
+        // Edit entry modal
+        const editEntryModal = document.getElementById('editEntryModal');
+
+        closeButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                editEntryModal.style.display = 'none';
+            });
+        });
+
+        window.addEventListener('click', (e) => {
+            if (e.target === editEntryModal) {
+                editEntryModal.style.display = 'none';
+            }
+        });
+
+        // Edit entry form
+        document.getElementById('editEntryForm').addEventListener('submit', (e) => {
+            e.preventDefault();
+            this.saveEntryEdit();
+        });
     }
 
     populateJobSelects() {
@@ -500,13 +521,13 @@ class SalaryTracker {
 
     addSalaryEntry() {
         const jobId = document.getElementById('jobSelect').value;
-        const month = document.getElementById('month').value;
+        const monthYearInput = document.getElementById('monthYearInput').value; // Get value from new input
         const salary = parseFloat(document.getElementById('salary').value);
         const hours = parseFloat(document.getElementById('hours').value);
 
         // Check if entry for this job and month already exists
         const existingEntryIndex = this.entries.findIndex(entry =>
-            entry.jobId === jobId && entry.month === month
+            entry.jobId === jobId && entry.month === monthYearInput
         );
 
         if (existingEntryIndex !== -1) {
@@ -521,7 +542,7 @@ class SalaryTracker {
             this.entries.push({
                 id: this.generateId(),
                 jobId,
-                month,
+                month: monthYearInput, // Use the combined month-year string
                 salary,
                 hours
             });
@@ -541,11 +562,11 @@ class SalaryTracker {
 
         // Clear form
         document.getElementById('salary').value = '';
-        this.setDefaultMonth();
+        this.setDefaultMonthYear(); // Call the updated function
     }
 
-    setDefaultMonth() {
-        const monthSelect = document.getElementById('month');
+    setDefaultMonthYear() {
+        const monthYearInput = document.getElementById('monthYearInput');
 
         // Get all months for the current job
         const jobEntries = this.entries.filter(entry => entry.jobId === this.currentJobId);
@@ -563,12 +584,13 @@ class SalaryTracker {
             }
 
             const nextMonthValue = `${nextYear}-${nextMonth.toString().padStart(2, '0')}`;
-
-            // Check if this option exists in the select
-            const option = monthSelect.querySelector(`option[value="${nextMonthValue}"]`);
-            if (option) {
-                monthSelect.value = nextMonthValue;
-            }
+            monthYearInput.value = nextMonthValue; // Set the value of the month input
+        } else {
+            // If no entries, set to current month/year
+            const today = new Date();
+            const currentMonth = (today.getMonth() + 1).toString().padStart(2, '0');
+            const currentYear = today.getFullYear();
+            monthYearInput.value = `${currentYear}-${currentMonth}`;
         }
     }
 
@@ -576,13 +598,13 @@ class SalaryTracker {
         if (!this.currentJobId) return null;
 
         // Get form data if available
-        const month = document.getElementById('month').value;
+        const monthYearInput = document.getElementById('monthYearInput').value;
         const salary = parseFloat(document.getElementById('salary').value) || 0;
         const hours = parseFloat(document.getElementById('hours').value) || 0;
         const jobId = document.getElementById('jobSelect').value;
 
-        if (month && salary && hours && jobId === this.currentJobId) {
-            return { month, salary, hours, jobId };
+        if (monthYearInput && salary && hours && jobId === this.currentJobId) {
+            return { month: monthYearInput, salary, hours, jobId };
         }
 
         // If no current entry in form, get the latest entry for the current job
@@ -763,6 +785,15 @@ class SalaryTracker {
             rateDiffCell.className = rateDiff >= 0 ? 'positive' : 'negative';
 
             const actionCell = document.createElement('td');
+            
+            // Create edit button
+            const editBtn = document.createElement('button');
+            editBtn.className = 'edit-btn';
+            editBtn.textContent = 'Edit';
+            editBtn.addEventListener('click', () => this.openEditEntryModal(entry));
+            actionCell.appendChild(editBtn);
+            
+            // Create delete button
             const deleteBtn = document.createElement('button');
             deleteBtn.className = 'delete-btn';
             deleteBtn.textContent = 'Delete';
@@ -782,6 +813,77 @@ class SalaryTracker {
             // Append row to table
             tableBody.appendChild(row);
         });
+    }
+
+    openEditEntryModal(entry) {
+        // Populate the edit entry form with current values
+        document.getElementById('editEntryId').value = entry.id;
+        document.getElementById('editEntryJob').value = entry.jobId;
+        
+        // Set the combined month/year value
+        document.getElementById('editEntryMonthYear').value = entry.month;
+        
+        document.getElementById('editEntrySalary').value = entry.salary;
+        document.getElementById('editEntryHours').value = entry.hours;
+
+        // Populate job select in edit modal
+        this.populateEditEntryJobSelect();
+
+        // Show the modal
+        document.getElementById('editEntryModal').style.display = 'block';
+    }
+
+    populateEditEntryJobSelect() {
+        const editEntryJobSelect = document.getElementById('editEntryJob');
+        
+        // Clear existing options
+        editEntryJobSelect.innerHTML = '';
+
+        // Add options for each job
+        this.jobs.forEach(job => {
+            const option = document.createElement('option');
+            option.value = job.id;
+            option.textContent = job.name;
+            editEntryJobSelect.appendChild(option);
+        });
+    }
+
+    saveEntryEdit() {
+        const entryId = document.getElementById('editEntryId').value;
+        const jobId = document.getElementById('editEntryJob').value;
+        const monthYear = document.getElementById('editEntryMonthYear').value; // Get combined month/year
+        const salary = parseFloat(document.getElementById('editEntrySalary').value);
+        const hours = parseFloat(document.getElementById('editEntryHours').value);
+
+        // Check if another entry exists for this job and month (excluding current entry)
+        const existingEntry = this.entries.find(entry => 
+            entry.jobId === jobId && 
+            entry.month === monthYear && 
+            entry.id !== entryId
+        );
+
+        if (existingEntry) {
+            alert('An entry for this job and month already exists. Please choose a different month or job.');
+            return;
+        }
+
+        // Find and update the entry
+        const entryIndex = this.entries.findIndex(entry => entry.id === entryId);
+        if (entryIndex !== -1) {
+            this.entries[entryIndex].jobId = jobId;
+            this.entries[entryIndex].month = fullMonth;
+            this.entries[entryIndex].salary = salary;
+            this.entries[entryIndex].hours = hours;
+
+            this.saveData();
+            this.updateSalaryHistory();
+            this.updateGeneralAnalytics();
+            this.updateChart();
+            this.updateStatistics();
+
+            // Close the modal
+            document.getElementById('editEntryModal').style.display = 'none';
+        }
     }
 
     deleteEntry(entryId) {
