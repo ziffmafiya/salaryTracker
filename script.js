@@ -246,11 +246,14 @@ class SalaryTracker {
             jobSettingsModal.style.display = 'block';
         });
 
-        closeButtons.forEach(button => {
-            button.addEventListener('click', () => {
-                jobSettingsModal.style.display = 'none';
-                editJobModal.style.display = 'none';
-            });
+        // Close job settings modal
+        jobSettingsModal.querySelector('.close-modal').addEventListener('click', () => {
+            jobSettingsModal.style.display = 'none';
+        });
+
+        // Close edit job modal
+        editJobModal.querySelector('.close-modal').addEventListener('click', () => {
+            editJobModal.style.display = 'none';
         });
 
         window.addEventListener('click', (e) => {
@@ -277,10 +280,9 @@ class SalaryTracker {
         // Edit entry modal
         const editEntryModal = document.getElementById('editEntryModal');
 
-        closeButtons.forEach(button => {
-            button.addEventListener('click', () => {
-                editEntryModal.style.display = 'none';
-            });
+        // Close edit entry modal
+        editEntryModal.querySelector('.close-modal').addEventListener('click', () => {
+            editEntryModal.style.display = 'none';
         });
 
         window.addEventListener('click', (e) => {
@@ -655,8 +657,8 @@ class SalaryTracker {
         const tableBody = document.querySelector('#salaryHistoryTable tbody');
         tableBody.innerHTML = '';
 
-        // Get filtered entries based on period
-        const filteredEntries = this.getFilteredEntries();
+        // Get filtered entries based on analytics settings
+        const filteredEntries = this.getFilteredEntriesForAnalytics();
 
         // Sort entries by month (newest first)
         filteredEntries.sort((a, b) => b.month.localeCompare(a.month));
@@ -818,7 +820,14 @@ class SalaryTracker {
     openEditEntryModal(entry) {
         // Populate the edit entry form with current values
         document.getElementById('editEntryId').value = entry.id;
-        document.getElementById('editEntryJob').value = entry.jobId;
+        
+        const editEntryJobSpan = document.getElementById('editEntryJob');
+        const editEntryJobHidden = document.getElementById('editEntryJobHidden');
+        const job = this.jobs.find(j => j.id === entry.jobId);
+        if (job) {
+            editEntryJobSpan.textContent = job.name;
+            editEntryJobHidden.value = job.id; // Store the job ID in the hidden input
+        }
         
         // Set the combined month/year value
         document.getElementById('editEntryMonthYear').value = entry.month;
@@ -826,31 +835,13 @@ class SalaryTracker {
         document.getElementById('editEntrySalary').value = entry.salary;
         document.getElementById('editEntryHours').value = entry.hours;
 
-        // Populate job select in edit modal
-        this.populateEditEntryJobSelect();
-
         // Show the modal
         document.getElementById('editEntryModal').style.display = 'block';
     }
 
-    populateEditEntryJobSelect() {
-        const editEntryJobSelect = document.getElementById('editEntryJob');
-        
-        // Clear existing options
-        editEntryJobSelect.innerHTML = '';
-
-        // Add options for each job
-        this.jobs.forEach(job => {
-            const option = document.createElement('option');
-            option.value = job.id;
-            option.textContent = job.name;
-            editEntryJobSelect.appendChild(option);
-        });
-    }
-
     saveEntryEdit() {
         const entryId = document.getElementById('editEntryId').value;
-        const jobId = document.getElementById('editEntryJob').value;
+        const jobId = document.getElementById('editEntryJobHidden').value; // Get jobId from hidden input
         const monthYear = document.getElementById('editEntryMonthYear').value; // Get combined month/year
         const salary = parseFloat(document.getElementById('editEntrySalary').value);
         const hours = parseFloat(document.getElementById('editEntryHours').value);
@@ -871,7 +862,7 @@ class SalaryTracker {
         const entryIndex = this.entries.findIndex(entry => entry.id === entryId);
         if (entryIndex !== -1) {
             this.entries[entryIndex].jobId = jobId;
-            this.entries[entryIndex].month = fullMonth;
+            this.entries[entryIndex].month = monthYear;
             this.entries[entryIndex].salary = salary;
             this.entries[entryIndex].hours = hours;
 
@@ -1049,7 +1040,7 @@ class SalaryTracker {
     }
 
     updateChart() {
-        const filteredEntries = this.getFilteredEntries();
+        const filteredEntries = this.getFilteredEntriesForAnalytics(); // Use analytics settings for filtering
         const chartType = document.querySelector('input[name="chartType"]:checked').value;
 
         // Get all months
@@ -1258,11 +1249,13 @@ class SalaryTracker {
     saveData() {
         localStorage.setItem('salaryTrackerJobs', JSON.stringify(this.jobs));
         localStorage.setItem('salaryTrackerEntries', JSON.stringify(this.entries));
+        localStorage.setItem('salaryTrackerAnalyticsSettings', JSON.stringify(this.analyticsSettings));
     }
 
     loadData() {
         const savedJobs = localStorage.getItem('salaryTrackerJobs');
         const savedEntries = localStorage.getItem('salaryTrackerEntries');
+        const savedAnalyticsSettings = localStorage.getItem('salaryTrackerAnalyticsSettings');
 
         if (savedJobs) {
             this.jobs = JSON.parse(savedJobs);
@@ -1270,6 +1263,10 @@ class SalaryTracker {
 
         if (savedEntries) {
             this.entries = JSON.parse(savedEntries);
+        }
+
+        if (savedAnalyticsSettings) {
+            this.analyticsSettings = JSON.parse(savedAnalyticsSettings);
         }
 
         // Migrate old data format if needed
@@ -1422,6 +1419,8 @@ class SalaryTracker {
 
         // Update analytics immediately
         this.updateGeneralAnalytics();
+        this.updateChart(); // Also update the chart
+        this.updateSalaryHistory(); // Also update the salary history
     }
 
     // Apply Analytics Settings
@@ -1452,6 +1451,7 @@ class SalaryTracker {
 
         // Update analytics with new settings
         this.updateGeneralAnalytics();
+        this.updateChart(); // Also update the chart
     }
 
     // Get filtered entries based on analytics settings

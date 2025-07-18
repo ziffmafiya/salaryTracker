@@ -275,21 +275,23 @@ h3 {
 
 .form-group input,
 .form-group select {
-   /* width: 100%;*/
+    width: 100%;
     padding: 10px;
     border: 2px solid #333333;
     border-radius: 5px;
     font-family: 'Montserrat', sans-serif;
     font-size: 14px;
-    transition: border-color 0.3s ease;
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
     background-color: #1a1a1a;
     color: #ffffff;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
 }
 
 .form-group input:focus,
 .form-group select:focus {
     outline: none;
     border-color: #4CAF50;
+    box-shadow: 0 0 0 3px rgba(76, 175, 80, 0.4);
 }
 
 button {
@@ -309,8 +311,18 @@ button:hover {
 }
 
 button[type="submit"] {
-    width: 100%;
     padding: 12px;
+}
+
+.form-actions {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 20px;
+}
+
+.form-actions button {
+    width: auto;
+    padding: 10px 20px;
 }
 
 .danger-button {
