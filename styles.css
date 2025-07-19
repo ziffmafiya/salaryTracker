@@ -479,6 +479,11 @@ td {
     background-color: #D32F2F;
 }
 
+.button-group {
+    display: flex;
+    gap: 5px; /* Adjust as needed for spacing between buttons */
+}
+
 /* Settings */
 .settings-container {
     display: flex;
