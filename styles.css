@@ -275,7 +275,7 @@ h3 {
 
 .form-group input,
 .form-group select {
-    width: 100%; /* Ensure all form inputs take full width */
+    /*width: 100%;*/
     padding: 10px;
     border: 2px solid #333333;
     border-radius: 5px;
@@ -371,7 +371,7 @@ button[type="submit"] {
 
 .salary-cell-content {
     display: flex;
-    align-items: center; /* Align items to the center */
+    align-items: center;
     gap: 5px; /* Adjust as needed for spacing */
 }
 
@@ -382,7 +382,7 @@ button[type="submit"] {
     border-radius: 12px;
     font-size: 11px;
     font-weight: 600;
-    /* Removed line-height: 1 to allow natural vertical alignment */
+    line-height: 1; /* Ensure consistent vertical alignment */
 }
 
 .percent-change.positive {
@@ -435,6 +435,7 @@ table {
 
 th, td {
     padding: 12px 15px;
+    text-align: left;
     border-bottom: 1px solid #333333;
     vertical-align: middle; /* Ensure vertical alignment in table cells */
 }
@@ -443,33 +444,10 @@ th {
     background-color: #1a1a1a;
     color: #ffffff;
     font-weight: 600;
-    text-align: center; /* Align table headers to center */
-}
-
-/* Align specific table data cells */
-td:nth-child(1), /* Month */
-td:nth-child(2) { /* Job */
-    text-align: left;
-}
-
-td:nth-child(3), /* Salary (UAH) */
-td:nth-child(4), /* Hours */
-td:nth-child(5), /* Hourly Rate */
-td:nth-child(6), /* Salary Diff */
-td:nth-child(7) { /* Rate Diff */
-    text-align: right;
-}
-
-td:nth-child(8) { /* Action */
-    text-align: center;
 }
 
 td {
     color: #ffffff;
-}
-
-.numeric {
-    text-align: right;
 }
 
 .edit-btn {
@@ -499,13 +477,6 @@ td {
 
 .delete-btn:hover {
     background-color: #D32F2F;
-}
-
-/* Align action buttons horizontally */
-.action-buttons-container {
-    display: flex;
-    gap: 5px; /* Adjust spacing between buttons as needed */
-    align-items: center; /* Vertically align buttons within the cell */
 }
 
 /* Settings */
@@ -864,12 +835,6 @@ footer {
 .date-input input:focus {
     border-color: #4CAF50;
     outline: none;
-}
-
-/* Style for calendar icon in month input */
-input[type="month"]::-webkit-calendar-picker-indicator {
-    filter: invert(1); /* Invert colors to make it white on a dark background */
-    cursor: pointer;
 }
 
 .modal-actions {
