@@ -371,7 +371,7 @@ button[type="submit"] {
 
 .salary-cell-content {
     display: flex;
-    align-items: baseline; /* Align items to their text baseline */
+    align-items: center; /* Align items to the center */
     gap: 5px; /* Adjust as needed for spacing */
 }
 
@@ -435,7 +435,6 @@ table {
 
 th, td {
     padding: 12px 15px;
-    text-align: left;
     border-bottom: 1px solid #333333;
     vertical-align: middle; /* Ensure vertical alignment in table cells */
 }
@@ -444,6 +443,25 @@ th {
     background-color: #1a1a1a;
     color: #ffffff;
     font-weight: 600;
+    text-align: center; /* Align table headers to center */
+}
+
+/* Align specific table data cells */
+td:nth-child(1), /* Month */
+td:nth-child(2) { /* Job */
+    text-align: left;
+}
+
+td:nth-child(3), /* Salary (UAH) */
+td:nth-child(4), /* Hours */
+td:nth-child(5), /* Hourly Rate */
+td:nth-child(6), /* Salary Diff */
+td:nth-child(7) { /* Rate Diff */
+    text-align: right;
+}
+
+td:nth-child(8) { /* Action */
+    text-align: center;
 }
 
 td {
