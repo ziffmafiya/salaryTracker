@@ -720,7 +720,7 @@ class SalaryTracker {
             jobCell.textContent = job.name;
 
             const salaryCell = document.createElement('td');
-            salaryCell.classList.add('salary-cell-content');
+            salaryCell.classList.add('salary-cell-content', 'numeric');
             const salaryValueSpan = document.createElement('span');
             salaryValueSpan.textContent = `${entry.salary.toFixed(2)} UAH`;
             salaryCell.appendChild(salaryValueSpan);
@@ -752,17 +752,19 @@ class SalaryTracker {
 
             const hoursCell = document.createElement('td');
             hoursCell.textContent = entry.hours;
+            hoursCell.classList.add('numeric');
 
             const hourlyRateCell = document.createElement('td');
             hourlyRateCell.innerHTML = `${hourlyRate.toFixed(2)} UAH/h`;
+            hourlyRateCell.classList.add('numeric');
 
             const salaryDiffCell = document.createElement('td');
             salaryDiffCell.textContent = `${salaryDiff >= 0 ? '+' : ''}${salaryDiff.toFixed(2)}`;
-            salaryDiffCell.className = salaryDiff >= 0 ? 'positive' : 'negative';
+            salaryDiffCell.className = salaryDiff >= 0 ? 'positive numeric' : 'negative numeric';
 
             const rateDiffCell = document.createElement('td');
             rateDiffCell.textContent = `${rateDiff >= 0 ? '+' : ''}${rateDiff.toFixed(2)} UAH/h`;
-            rateDiffCell.className = rateDiff >= 0 ? 'positive' : 'negative';
+            rateDiffCell.className = rateDiff >= 0 ? 'positive numeric' : 'negative numeric';
 
             const actionCell = document.createElement('td');
             

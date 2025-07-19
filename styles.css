@@ -450,6 +450,10 @@ td {
     color: #ffffff;
 }
 
+.numeric {
+    text-align: right;
+}
+
 .edit-btn {
     background-color: #2196F3;
     color: white;
