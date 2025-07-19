@@ -275,7 +275,7 @@ h3 {
 
 .form-group input,
 .form-group select {
-    /*width: 100%;*/
+    width: 100%; /* Ensure all form inputs take full width */
     padding: 10px;
     border: 2px solid #333333;
     border-radius: 5px;
@@ -481,6 +481,13 @@ td {
 
 .delete-btn:hover {
     background-color: #D32F2F;
+}
+
+/* Align action buttons horizontally */
+.action-buttons-container {
+    display: flex;
+    gap: 5px; /* Adjust spacing between buttons as needed */
+    align-items: center; /* Vertically align buttons within the cell */
 }
 
 /* Settings */
@@ -839,6 +846,12 @@ footer {
 .date-input input:focus {
     border-color: #4CAF50;
     outline: none;
+}
+
+/* Style for calendar icon in month input */
+input[type="month"]::-webkit-calendar-picker-indicator {
+    filter: invert(1); /* Invert colors to make it white on a dark background */
+    cursor: pointer;
 }
 
 .modal-actions {

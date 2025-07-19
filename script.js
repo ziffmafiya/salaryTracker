@@ -768,19 +768,24 @@ class SalaryTracker {
 
             const actionCell = document.createElement('td');
             
+            const actionButtonsContainer = document.createElement('div');
+            actionButtonsContainer.className = 'action-buttons-container';
+
             // Create edit button
             const editBtn = document.createElement('button');
             editBtn.className = 'edit-btn';
             editBtn.textContent = 'Edit';
             editBtn.addEventListener('click', () => this.openEditEntryModal(entry));
-            actionCell.appendChild(editBtn);
+            actionButtonsContainer.appendChild(editBtn);
             
             // Create delete button
             const deleteBtn = document.createElement('button');
             deleteBtn.className = 'delete-btn';
             deleteBtn.textContent = 'Delete';
             deleteBtn.addEventListener('click', () => this.deleteEntry(entry.id));
-            actionCell.appendChild(deleteBtn);
+            actionButtonsContainer.appendChild(deleteBtn);
+
+            actionCell.appendChild(actionButtonsContainer);
 
             // Append cells to row
             row.appendChild(monthCell);
